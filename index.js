@@ -86,6 +86,14 @@ class EventManager {
   }
   /**
    *
+   * @param {string} name
+   * @param {object} params
+   */
+  trigger(name, params) {
+    this.emit(name, params);
+  }
+  /**
+   *
    */
   clear() {
     this._events = [];
