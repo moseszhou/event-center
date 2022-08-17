@@ -10,6 +10,13 @@
     "type": "git",
     "url": "https://github.com/moseszhou/yum-event-center.git"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "moses.zhou",
+  "license": "MIT",
+  "keywords": [
+    "events",
+    "event-manager",
+    "event-listener",
+    "event-emitter",
+    "event"
+  ]
 }

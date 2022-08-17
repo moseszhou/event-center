@@ -1,4 +1,3 @@
-
 # yum-event-manager
 
 ## Install
@@ -15,12 +14,23 @@ import eventManger from 'yum-event-manager';
  const readyListener = eventManger.addEventListener("ready",(params)=>{ doing sth.});
 
  readyListener.remove()
- ```
+```
 
-## License
+the lasted listener can block the older listeners when it returns true.
 
-    MIT
+## for example
 
-## Keywords
+```js
 
-events event-manager event-listener event-emitter event
+import eventManger from 'yum-event-manager';
+
+ const listenerA = eventManger.addEventListener("ready",(params)=>{ doing sth.});
+ const listenerB = eventManger.addEventListener("ready",(params)=>{
+    doing sth;
+ return true; });
+
+
+eventManger.emit("ready",'only listenerB will be called')
+
+
+```
