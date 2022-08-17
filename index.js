@@ -74,14 +74,12 @@ class EventManager {
     if (name) {
       // console.log(`emitter event:${name}`);
       const events = this._events.filter((x) => x.name === name);
+      // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
       for (let i = events.length - 1; i >= 0; i--) {
         if (events[i].fn(params)) {
           return;
         }
       }
-
-      events.forEach((x) => x.fn(params));
-      // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
     }
   }
   /**
