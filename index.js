@@ -40,16 +40,16 @@ class EventManager {
    * @returns {{id:number,remove:()=>{}}}
    */
   addEventListener(name, fn) {
+    const id = this._eventId++;
     this._events.push({
-      id: this._eventId,
+      id,
       name,
       fn,
     });
-    this._eventId++;
     return {
-      id: this._eventId,
+      id: id,
       remove: () => {
-        this.removeEventListener({ id: this._eventId });
+        this.removeEventListener({ id });
       },
     };
   }
