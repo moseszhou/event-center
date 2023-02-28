@@ -37,7 +37,7 @@ class EventManager {
    *
    * @param {string} name
    * @param {()=>{}} fn
-   * @returns {{id:number,remove:()=>{}}}
+   * @returns {{remove:()=>{}}}
    */
   addEventListener(name, fn) {
     const id = this._eventId++;
@@ -47,11 +47,30 @@ class EventManager {
       fn,
     });
     return {
-      id: id,
       remove: () => {
         this.removeEventListener({ id });
       },
     };
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @param {()=>{}} fn
+   */
+  once(name, fn) {
+    const id = this._eventId++;
+    const remove = () => {
+      this.removeEventListener({ id });
+    };
+    this._events.push({
+      id,
+      name,
+      fn: (params) => {
+        remove();
+        fn(params);
+      },
+    });
   }
 
   /**
@@ -76,12 +95,32 @@ class EventManager {
       const events = this._events.filter((x) => x.name === name);
       // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
       for (let i = events.length - 1; i >= 0; i--) {
-        if (events[i].fn(params)) {
+        if (events[i].fn(params) === true) {
           return;
         }
       }
     }
   }
+
+  /**
+   *
+   * @param {string} name
+   * @param {object} params
+   * @returns {object}
+   */
+  waterfallEmit(name, params) {
+    if (name) {
+      // console.log(`emitter event:${name}`);
+      const events = this._events.filter((x) => x.name === name);
+      // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
+      let data = params;
+      for (let i = events.length - 1; i >= 0; i--) {
+        data = events[i].fn(data);
+      }
+      return data;
+    }
+  }
+
   /**
    *
    * @param {string} name
