@@ -1,15 +1,15 @@
-# yum-event-manager
+# yum-event-center
 
 ## Install
 
 ```bash
-npm install yum-event-manager
+npm install yum-event-center
 ```
 
 ## Usage
 
 ```js
-import eventManger from 'yum-event-manager';
+import eventManger from 'yum-event-center';
 
  const readyListener = eventManger.addEventListener("ready",(params)=>{ doing sth.});
 
@@ -22,7 +22,7 @@ the lasted listener can block the older listeners when it returns true.
 
 ```js
 
-import eventManger from 'yum-event-manager';
+import eventManger from 'yum-event-center';
 
  const listenerA = eventManger.addEventListener("ready",(params)=>{ doing sth.});
  const listenerB = eventManger.addEventListener("ready",(params)=>{
