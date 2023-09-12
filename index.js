@@ -114,8 +114,14 @@ class EventManager {
       const events = this._events.filter((x) => x.name === name);
       // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
       let data = params;
+      let isEnd = false;
       for (let i = events.length - 1; i >= 0; i--) {
-        data = events[i].fn(data);
+        data = events[i].fn(data, () => {
+          isEnd = true;
+        });
+        if (isEnd) {
+          break;
+        }
       }
       return data;
     }
