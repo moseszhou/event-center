@@ -15,22 +15,9 @@
  * @description: 事件管理器
  */
 class EventManager {
-  static instance;
-
   constructor() {
     this._events = [];
     this._eventId = 0;
-  }
-
-  /**
-   * @description: 事件管理器
-   * @returns {EventManager}
-   */
-  static getInstance() {
-    if (this.instance instanceof this === false) {
-      this.instance = new this();
-    }
-    return this.instance;
   }
 
   /**
@@ -142,4 +129,4 @@ class EventManager {
     this._events = [];
   }
 }
-export default EventManager.getInstance();
+export default new EventManager();
