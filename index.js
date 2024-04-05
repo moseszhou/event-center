@@ -23,7 +23,7 @@ class EventManager {
   /**
    *
    * @param {string} name
-   * @param {()=>{}} fn
+   * @param {(data:object,endFn:()=>{})=>{}} fn 事件处理函数,以waterfallEmit触发时, 如果提供了endFn,则表示结束瀑布流
    * @returns {{remove:()=>{}}}
    */
   addEventListener(name, fn) {
@@ -90,7 +90,7 @@ class EventManager {
   }
 
   /**
-   *
+   * @description: 瀑布流式事件触发(倒序触发)，事件注册的函数返回值作为下一个事件的参数，如果想结束瀑布流，在订阅函数中调用endFn()
    * @param {string} name
    * @param {object} params
    * @returns {object}
