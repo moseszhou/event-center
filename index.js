@@ -130,3 +130,4 @@ class EventManager {
   }
 }
 export default new EventManager();
+export { EventManager };
