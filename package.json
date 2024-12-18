@@ -2,7 +2,12 @@
   "name": "yum-event-center",
   "version": "1.1.5",
   "description": "",
-  "main": "index.js",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "exports": {
+    "require": "./index.cjs",
+    "import": "./index.mjs"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

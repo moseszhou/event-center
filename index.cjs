@@ -1,0 +1,134 @@
+/*
+ * @Author: moses.zhou
+ * @Date: 2019-02-20 09:03:31
+ * @Last Modified by: qingren
+ * @Last Modified time: 2024-12-18 19:00:31
+ *
+ * const readyListener = eventManger.addEventListener("ready",(params)=>{ doing sth.});
+ *
+ *
+ * readyListener.remove()
+ *
+ */
+
+/**
+ * @description: 事件管理器
+ */
+class EventManager {
+  constructor() {
+    this._events = [];
+    this._eventId = 0;
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @param {(data:object,endFn:()=>{})=>{}} fn 事件处理函数,以waterfallEmit触发时, 如果提供了endFn,则表示结束瀑布流
+   * @returns {{remove:()=>{}}}
+   */
+  addEventListener(name, fn) {
+    const id = this._eventId++;
+    this._events.push({
+      id,
+      name,
+      fn,
+    });
+    return {
+      remove: () => {
+        this.removeEventListener({ id });
+      },
+    };
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @param {()=>{}} fn
+   */
+  once(name, fn) {
+    const id = this._eventId++;
+    const remove = () => {
+      this.removeEventListener({ id });
+    };
+    this._events.push({
+      id,
+      name,
+      fn: (params) => {
+        remove();
+        fn(params);
+      },
+    });
+  }
+
+  /**
+   *
+   * @param {{id:number}} param0
+   */
+  removeEventListener({ id }) {
+    const i = this._events.findIndex((x) => x.id === id);
+    if (i > -1) {
+      this._events.splice(i, 1);
+    }
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @param {object} params
+   */
+  emit(name, params) {
+    if (name) {
+      // console.log(`emitter event:${name}`);
+      const events = this._events.filter((x) => x.name === name);
+      // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
+      for (let i = events.length - 1; i >= 0; i--) {
+        if (events[i].fn(params) === true) {
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * @description: 瀑布流式事件触发(倒序触发)，事件注册的函数返回值作为下一个事件的参数，如果想结束瀑布流，在订阅函数中调用endFn()
+   * @param {string} name
+   * @param {object} params
+   * @returns {object}
+   */
+  waterfallEmit(name, params) {
+    if (name) {
+      // console.log(`emitter event:${name}`);
+      const events = this._events.filter((x) => x.name === name);
+      // console.assert(events.length == 0, `'${name}'事件还未有程序注册`);
+      let data = params;
+      let isEnd = false;
+      for (let i = events.length - 1; i >= 0; i--) {
+        data = events[i].fn(data, () => {
+          isEnd = true;
+        });
+        if (isEnd) {
+          break;
+        }
+      }
+      return data;
+    }
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @param {object} params
+   */
+  trigger(name, params) {
+    this.emit(name, params);
+  }
+  /**
+   *
+   */
+  clear() {
+    this._events = [];
+  }
+}
+
+module.exports = new EventManager();
+module.exports.EventManager = EventManager;
