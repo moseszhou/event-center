@@ -27,6 +27,13 @@ class EventManager {
    * @returns {{remove:()=>{}}}
    */
   addEventListener(name, fn) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      throw new Error('Event name must be a non-empty string');
+    }
+    if (typeof fn !== 'function') {
+      throw new Error('Event listener must be a function');
+    }
+    
     const id = this._eventId++;
     this._events.push({
       id,
@@ -44,8 +51,16 @@ class EventManager {
    *
    * @param {string} name
    * @param {()=>{}} fn
+   * @returns {{remove:()=>{}}}
    */
   once(name, fn) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      throw new Error('Event name must be a non-empty string');
+    }
+    if (typeof fn !== 'function') {
+      throw new Error('Event listener must be a function');
+    }
+    
     const id = this._eventId++;
     const remove = () => {
       this.removeEventListener({ id });
@@ -58,6 +73,9 @@ class EventManager {
         fn(params);
       },
     });
+    return {
+      remove,
+    };
   }
 
   /**
@@ -103,11 +121,15 @@ class EventManager {
       let data = params;
       let isEnd = false;
       for (let i = events.length - 1; i >= 0; i--) {
-        data = events[i].fn(data, () => {
+        const result = events[i].fn(data, () => {
           isEnd = true;
         });
         if (isEnd) {
           break;
+        }
+        // Only update data if the listener returned a non-undefined value
+        if (result !== undefined) {
+          data = result;
         }
       }
       return data;
